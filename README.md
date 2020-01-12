@@ -1,4 +1,4 @@
-2019-01 meetup @ Coop Bank
+2020-01 meetup @ Coop Bank
 ==========================
 
 ![Flyer](img/flyer.png)
