@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Writing R web APIs with plumber and Docker</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Andreas Beger" />
+    <meta name="date" content="2019-01-16" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/robot-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Writing R web APIs with plumber and Docker
+### Andreas Beger
+### Predictive Heuristics
+### 2019-01-16
+
+---
+
+
+class: middle, center
+
+.huge[
+
+Web API with plumber  
+
+\+ 
+
+Docker 
+
+\+ 
+
+R package
+
+]
+
+---
+
+# Wut is diz
+
+End result: something using R is running somewhere, and I can do this
+
+![](img/plumber-basic.gif)
+
+
+---
+
+# Why 
+
+.large[
+
+My specific use case:
+
+- Andy, sitting in Tallinn, good with R, terrible with Python
+
+- Computer scientists in Los Angeles, R is the devil's work
+
+- Docker + web API as common bridge, R moves to the background
+
+]
+
+---
+
+# Why these ingredients
+
+.large[
+
+1. **plumber** to write the web API and abstract away the need to interact with R
+
+2. Docker to handle the dependencies and setup; abstract away the need to install R, R packages, and how to start the plumber API.&lt;sup&gt;1&lt;/sup&gt;
+
+3. (optional) Organize the underlying functionality as a R package; easier testing (**testthat**, etc.) and documentation.
+
+]
+
+.footnote[
+
+[1] I guess the computer scientists / IT people also have other reasons.
+
+]
+
+---
+
+# Simple for a 20m talk, yes yes
+
+.center[
+
+![:scale 80%](img/draw-the-owl.jpg)
+
+]
+
+---
+
+# Example template
+
+https://www.github.com/andybega/plumber.pack
+
+![:scale 90%](img/plumber.pack-github.png)
+
+---
+
+class: middle, inverse
+
+.huge[
+
+**Plumber**
+
+Docker
+
+Example plumber.pack
+
+]
+
+---
+
+class: center, middle
+
+![](img/what-is-plumber.png)
+
+---
+
+# Basic example
+
+[`2020-01-coop-pank/plumber-ex/plumber.R`](https://github.com/r-tallinn/2020-01-coop-pank/blob/master/plumber-ex/plumber.R)
+
+```r
+library("plumber")
+
+#* @apiTitle Plumber Example API
+
+#* Echo back the input
+#* @param msg The message to echo
+#* @get /echo
+function(msg=""){
+  list(msg = paste0("The message is: '", msg, "'"))
+}
+
+#* Plot a histogram
+#* @png
+#* @get /plot
+function(){
+  rand &lt;- rnorm(100)
+  hist(rand)
+}
+
+...
+```
+
+Define what happens at `http://.../echo` and `http://.../plot` 
+
+---
+
+# Running
+
+```r
+library("plumber")
+
+pr &lt;- plumber::plumb("plumber.R")
+pr$run(port = 5018)
+```
+
+Now I can go to `http://127.0.0.1:5018/echo`, etc. and interact with the API
+
+
+
+---
+
+class: middle, inverse
+
+.huge[
+
+Plumber
+
+**Docker**
+
+Example plumber.pack
+
+]
+
+---
+
+# Docker
+
+&gt; Docker is a containerization platform that packages your application and all its dependencies together in the form of a docker container to ensure that your application works seamlessly in any environment.
+
+Workflow:
+
+1. Install Docker
+
+2. Start the Docker daemon
+
+3. Write a Dockerfile for your app/service/API
+
+4. Use the Dockerfile to build an image
+
+5. Start/run containers based on that image -- the container now runs your app/service/API
+
+6. Great success 
+
+---
+
+# Docker
+
+.large[
+
+For the purposes here:
+
+1. A way to specify a recipe for installing and running our plumber API -- kind of like a "`setup.R`" script but more general
+
+2. Make running this on a server easier -- as long as Docker is installed we don't need to worry about the underlying OS
+
+Get it running on Docker on your laptop, and it should install and work on a server that has Docker. 
+
+]
+
+---
+
+# Dockerfile
+
+[`2020-01-coop-pank/plumber-ex/Dockerfile`](https://github.com/r-tallinn/2020-01-coop-pank/blob/master/plumber-ex/Dockerfile)
+
+```dockerfile
+FROM rocker/r-base
+MAINTAINER Andreas Beger &lt;adbeger@gmail.com&gt;
+
+WORKDIR  /plumber-ex
+
+RUN apt-get update -qq &amp;&amp; apt-get install -y \
+  git-core \
+  libssl-dev \
+  libcurl4-gnutls-dev
+
+RUN install2.r plumber
+
+# the source files are what changes most frequently, so do this at the end to
+# avoid invalidating the chached dependency install layers that take long to run
+COPY ./ /plumber-ex
+
+ENTRYPOINT ["R", "-e", \
+  "pr &lt;- plumber::plumb(commandArgs()[4]); pr$run(host='0.0.0.0', port=5018)"]
+
+CMD ["/plumber-ex/plumber.R"]
+```
+
+---
+
+# Build it
+
+Put the Dockerfile in the same folder as `plumber.R` and then:
+
+```zsh
+# Build the image and tag it with the name "plumberex"
+docker build -t plumberex .
+
+# Run a container with the name "plumberex" using the "plumberex" image
+# The -d runs it in the background so we can continue 
+docker run --rm --name plumberex -d -p 5018:5018 plumberex
+
+# Make sure it works
+curl "http://127.0.0.1:5018/echo?msg=HelloWorld"
+
+# Shut it down
+docker stop plumberex
+```
+
+---
+
+class: middle, inverse
+
+.huge[
+
+Plumber
+
+Docker
+
+**Example plumber.pack**
+
+]
+
+---
+
+# Changes from examples before
+
+- The folder now has a regular R package structure (and the name "**plumber.pack**")
+
+- Move "`plumber.R`" to "`/inst/plumber.R`"
+
+- Move substantive code from the "`plumber.R`" API functions to separate functions in the package ("`R/`" folder)
+
+- Modify the Dockerfile so it builds **plumber.pack**
+
+- Modify "`inst/plumber.R`" so it attaches the **plumber.pack**
+
+- For this example, the end result is the same as before, e.g. `/echo`
+
+- But now we can test, document, check and so on using the regular R package infrastructure
+
+---
+
+# Repo structure
+
+TBD
+
+---
+
+# Move code to package
+
+.pull-left[
+`inst/plumber.R`
+
+
+&lt;img src="img/pp-plumber.R.png" width="99%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+`R/endpoints.R`
+
+&lt;img src="img/pp-endpoints.R.png" width="99%" style="display: block; margin: auto;" /&gt;
+]
+
+(Also load **plumber.pack** in "`inst/plumber.R`")
+
+
+---
+
+# Modify the Dockerfile
+
+```dockerfile
+FROM rocker/r-base
+MAINTAINER Andreas Beger &lt;adbeger@gmail.com&gt;
+
+WORKDIR  /plumber.pack
+
+RUN apt-get update -qq &amp;&amp; apt-get install -y \
+  git-core \
+  libssl-dev \
+  libcurl4-gnutls-dev
+
+RUN install2.r plumber
+
+# the source files are what changes most frequently, so do this at the end to
+# avoid invalidating the chached dependency install layers that take long to run
+COPY ./ /plumber.pack
+
+*# install R code portion
+*RUN R CMD INSTALL --no-multiarch --with-keep.source /plumber.pack
+
+ENTRYPOINT ["R", "-e", \
+  "pr &lt;- plumber::plumb(commandArgs()[4]); pr$run(host='0.0.0.0', port=5018)"]
+
+CMD ["/plumber.pack/inst/plumber.R"]
+```
+
+---
+
+# Using this: locally with R
+
+`plumber.pack::start_api()`
+
+```r
+#' Start service
+#'
+#' Start the API using [plumber::plumb()]. Shortcut for some boilerplate code.
+#'
+#' @param port Port on which to run the API, see [plumber::plumb()].
+#'
+#' @export
+start_api &lt;- function(port = 5018) {
+  if (!interactive()) stop("For interactive use only")
+
+  pr &lt;- plumber::plumb(system.file("plumber.R", package = "plumber.pack"))
+  pr$run(port = port)
+  invisible(pr)
+}
+
+```
+
+---
+
+On a server
+
+1. Copy over files
+2. Build and start container
+
+
+---
+
+# Thanks
+
+Contact:
+
+- Twitter: @andybeega
+- Email: adbeger@gmail.com
+
+Resources:
+
+- Basic example without R package stuff:
+  https://github.com/r-tallinn/2020-01-coop-pank/tree/master/plumber-ex
+- Slides: https://r-tallinn.github.io/2020-01-coop-pank/plumber-docker
+- Example with R package: https://github.com/andybega/plumber.pack
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
