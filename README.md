@@ -8,7 +8,7 @@ page](https://www.meetup.com/r-tallinn/events/264212143/)
 
 ## Slides
 
-[Intro slides](https://r-tallinn.github.io/2020-01-coop-pank/intro-slides/)
+[Intro slides](https://r-tallinn.github.io/2020-01-coop-pank/intro-slides/index.html)
 
 Mart Kaska: *How to catch bad guys with R?*
 
