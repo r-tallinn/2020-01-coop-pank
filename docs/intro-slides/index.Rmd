@@ -102,6 +102,8 @@ class: center, middle
 
 Andreas Beger, Data Scientist at Predictive Heuristics
 
+[(slides)](https://r-tallinn.github.io/2020-01-coop-pank/plumber-docker)
+
 ---
 
 class: center, middle
