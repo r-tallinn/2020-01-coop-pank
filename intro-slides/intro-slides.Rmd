@@ -1,0 +1,139 @@
+---
+title: "Tallinn R User Group"
+subtitle: "@Coop Pank"
+date: "2019-01-16"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["my-theme.css", robot-fonts]
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Program
+
+18:00 - Introduction by Andreas Beger, R-Tallinn (Co-)Organizer
+
+18:05 - Remarks by our host, Mart Kaska
+
+18:15 - Mart Kaska, Growth Analyst at Coop Pank: *How to catch bad guys with R?*
+
+18:45 - Andreas Beger, Data Scientist at Predictive Heuristics: *Writing R web APIs with plumber and Docker*
+
+19:15 - Simon Wenkel, ML Engineer: *R – Python – Julia. Insights into old and new languages for data science and machine learning and implications for their use in (high performance) production environments*
+
+19:45 or so: end
+
+---
+
+# About the group
+
+.large[
+
+- First meeting in February 2019
+
+- This is the 4th meeting
+
+- Aim for about once a quarter
+
+- No sponsors, no funding<sup>1</sup>
+
+]
+
+.footnote[
+
+[1] Although maybe a R Consortium RUGS grant if they do them for 2020. 
+
+]
+
+---
+
+class: middle
+
+# We<sup>*</sup> need your help
+
+.large[
+
+- Present: what are you using R for, something cool other people might not know, ...
+
+- Host: arrange for your company/organization to host a future event
+
+- Design us a logo! (Thanks Alex for making the meeting poster)
+
+]
+
+.footnote[
+
+\* Like a royal "we"...I
+
+]
+
+---
+
+class: center, middle
+
+# Meeting GitHub repo
+
+.large[ https://github.com/r-tallinn ]
+
+---
+
+class: center, middle
+
+## Introductory remarks by our host
+
+.large[ Mart Kaska, Data Scientist at Coop Pank ]
+
+---
+
+class: center, middle
+
+## How to catch bad guys with R?
+
+.large[ Mart Kaska, Data Scientist at Coop Pank ]
+
+---
+
+class: center, middle
+
+## Writing R web APIs with plumber and Docker
+
+Andreas Beger, Data Scientist at Predictive Heuristics
+
+---
+
+class: center, middle
+
+## R – Python – Julia. Insights into old and new languages for data science and machine learning and implications for their use in (high performance) production environments
+
+Simon Wenkel, Machine Learning Engineer
+
+---
+
+# Thanks for coming!
+
+.large[
+
+Thank you to our host, Mart Kaska!
+
+Find the meeting repo at https://github.com/r-tallinn
+
+]
+
+***
+
+.small[
+
+#### Final subliminal messaging
+
+Tell me about your great talk ideas and willingness to host future meetups!
+
+- Andreas Beger
+- [adbeger@gmail.com](mailto:adbeger+rtallinn@gmail.com)
+- Twitter: [@andybeega](https://twitter.com/andybeega)
+
+]
+
+
