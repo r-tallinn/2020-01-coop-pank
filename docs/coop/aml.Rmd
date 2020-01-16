@@ -1,0 +1,100 @@
+---
+title: "How to catch bad guys with R"
+author: "Mart Kaska (mart.kaska@gmail.com)"
+output: 
+  ioslides_presentation:
+    incremental: true
+    widescreen: true
+    css: coop_theme.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# A few words about Coop Bank
+
+## Background of Coop Bank {data-background="img/background_wide.jpg" .build}
+
+- Just over two years old  
+
+- So what's changed?
+
+![](img/img_coop.jpg){width=300 height=200px} ![](img/img_kred.jpg){width=300 height=200px}
+
+- Growing at quite a rapid pace, just went public  
+
+
+## Basic R setup {data-background=img/background_wide.jpg}
+
+- Package  
+
+- Git  
+
+- Automating as much as possible  
+
+    - DBI for fetching (and writing) data
+    - tidyverse for data manipulation
+    - RMarkdown, sendmailR, taskscheduleR
+    - Other useful packages: keyring
+
+- Free some time for interesting sideprojects
+
+## Some examples {data-background=img/background_wide_white.jpg .centered}
+
+![](img/offers.jpg){width=620 height=450px}
+
+## Some examples {data-background=img/background_wide_white.jpg .centered}
+
+![](img/network.jpg){width=600 height=450px}
+
+# AML proof of concept
+
+## 3 months for testing ideas {data-background=img/background_wide.jpg .build}
+
+<div class="columns-2">
+
+![](img/thief.jpg){width=450 height=450px}
+
+- We can do it better than traditional algorithms
+
+- No compliance knowledge
+
+- Official system for benchmarking
+
+</div>
+
+## Private clients {data-background=img/background_wide.jpg}
+
+- How do suspicious people behave?
+
+- Took 1 year's worth of data
+
+- 20 features
+
+- Simple clustering
+
+## What was really surprising? {data-background=img/background_wide.jpg}
+
+- It worked!
+
+- 3x less detections to catch bad guys
+
+- Next time I would do it in a different way
+
+## Second try with business clients {data-background=img/background_wide.jpg}
+
+- Natural case for random forest or boosting algorithms
+
+- Where to start?
+
+- `list.files(x, pattern = suffix, recursive = T)`
+
+- features, features, features
+
+## Random forest, ~250 features {data-background=img/background_wide_white.jpg .centered}
+
+![](img/fp_probs.jpg){width=700 height=450px}
+
+
+## Thanks
