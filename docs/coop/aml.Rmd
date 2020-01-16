@@ -46,7 +46,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Some examples {data-background=img/background_wide_white.jpg .centered}
 
-![](img/network.jpg){width=600 height=450px}
+![](img/network.JPG=600 height=450px}
 
 # AML proof of concept
 
