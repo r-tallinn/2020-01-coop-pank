@@ -17,6 +17,6 @@ Mart Kaska: *How to catch bad guys with R?*
 - Example R package: https://github.com/andybega/plumber.pack
 - Basic example without package: [plumber-ex/](plumber-ex/)
 
-Simon Wenkel: *R - Python – Julia. Insights into old and new languages for data science and machine learning and implications for their use in (high performance) production environments*
+Simon Wenkel: [*R - Python – Julia. Insights into old and new languages for data science and machine learning and implications for their use in (high performance) production environments](https://www.simonwenkel.com/publications/presentations/20200116_Julia_Python_and_R_insights_benchmarks.pdf)*
 
 
