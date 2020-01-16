@@ -45,9 +45,9 @@ End result: something using R is running somewhere, and I can do this
 
 My specific use case:
 
-- Andy, sitting in Tallinn, good with R, terrible with Python
-
 - Computer scientists in Los Angeles, R is the devil's work
+
+- Andy, sitting in Tallinn, good with R, terrible with Python
 
 - Docker + web API as common bridge, R moves to the background
 
@@ -155,6 +155,9 @@ pr$run(port = 5018)
 
 Now I can go to `http://127.0.0.1:5018/echo`, etc. and interact with the API
 
+.center[
+![:scale 60%](img/run-api-from-r.gif)
+]
 
 
 ---
@@ -173,39 +176,45 @@ Example plumber.pack
 
 ---
 
-# Docker
+class: middle
+
+.large[
 
 > Docker is a containerization platform that packages your application and all its dependencies together in the form of a docker container to ensure that your application works seamlessly in any environment.
 
+]
+
+--
+
+...Ok
+
+???
+
 Workflow:
 
-1. Install Docker
-
-2. Start the Docker daemon
-
-3. Write a Dockerfile for your app/service/API
-
-4. Use the Dockerfile to build an image
-
-5. Start/run containers based on that image -- the container now runs your app/service/API
-
-6. Great success 
+- Install
+- Start daemon
+- Write a Dockerfile for your app/service/API
+- Use the Dockerfile to build an image
+- Start/run containers based on that image -- the container now runs your app/service/API
+- Great success 
 
 ---
 
 # Docker
 
+<p style="margin-bottom:2cm;"></p>
+
 .large[
 
-For the purposes here:
+<p style="margin-bottom:1.5cm;">Basically for our purpose:</p>
 
-1. A way to specify a recipe for installing and running our plumber API -- kind of like a "`setup.R`" script but more general
+1. Recipe for installing and running our API -- Dockerfile
 
-2. Make running this on a server easier -- as long as Docker is installed we don't need to worry about the underlying OS
-
-Get it running on Docker on your laptop, and it should install and work on a server that has Docker. 
+2. Run on a server -- as long as Docker is installed, it should install and run
 
 ]
+
 
 ---
 
@@ -259,6 +268,14 @@ docker stop plumberex
 
 ---
 
+class: middle
+
+.center[
+![:scale 100%](img/run-api-with-docker.gif)
+]
+
+---
+
 class: middle, inverse
 
 .huge[
@@ -273,27 +290,15 @@ Docker
 
 ---
 
-# Changes from examples before
+# Changes from examples
 
-- The folder now has a regular R package structure (and the name "**plumber.pack**")
+- regular R package structure
+- move `plumber.R`" under "`inst/`
 
-- Move "`plumber.R`" to "`/inst/plumber.R`"
+.center[
+![](img/plumber-pack-folder.png)
+]
 
-- Move substantive code from the "`plumber.R`" API functions to separate functions in the package ("`R/`" folder)
-
-- Modify the Dockerfile so it builds **plumber.pack**
-
-- Modify "`inst/plumber.R`" so it attaches the **plumber.pack**
-
-- For this example, the end result is the same as before, e.g. `/echo`
-
-- But now we can test, document, check and so on using the regular R package infrastructure
-
----
-
-# Repo structure
-
-TBD
 
 ---
 
@@ -351,9 +356,55 @@ CMD ["/plumber.pack/inst/plumber.R"]
 
 ---
 
-# Using this: locally with R
+# To run
 
-`plumber.pack::start_api()`
+Same Docker commands as before
+
+```zsh
+docker build -t plumberpack . 
+docker run --rm --name plumberpack -d -p 5018:5018 plumberpack
+```
+
+---
+
+# On a server
+
+One way to try out, with DigitalOcean:
+
+1. Create a Docker image droplet
+
+2. Copy `plumber.pack` over (e.g. with `rsync`)
+
+3. Login to the droplet (e.g. with `ssh user@ip`)
+
+4. Do the regular Docker stuff (build image, start container)
+
+
+---
+
+# Thanks
+
+Contact:
+
+- [adbeger@gmail.com](mailto:adbeger+rtallinn@gmail.com)
+- Twitter: [@andybeega](https://twitter.com/andybeega)
+
+Resources:
+
+- Example with R package: https://github.com/andybega/plumber.pack
+- Basic example without R package stuff: https://github.com/r-tallinn/2020-01-coop-pank/tree/master/plumber-ex
+- Slides on GH: https://github.com/r-tallinn/2020-01-coop-pank/tree/master/docs/plumber-docker
+
+---
+
+# Using plumber.pack from R
+
+```r
+library("plumber.pack")
+start_api()
+```
+
+This is the function:
 
 ```r
 #' Start service
@@ -372,31 +423,6 @@ start_api <- function(port = 5018) {
 }
 
 ```
-
----
-
-On a server
-
-1. Copy over files
-2. Build and start container
-
-
----
-
-# Thanks
-
-Contact:
-
-- [adbeger@gmail.com](mailto:adbeger+rtallinn@gmail.com)
-- Twitter: [@andybeega](https://twitter.com/andybeega)
-
-Resources:
-
-- Example with R package: https://github.com/andybega/plumber.pack
-- Basic example without R package stuff: https://github.com/r-tallinn/2020-01-coop-pank/tree/master/plumber-ex
-- Slides on GH: https://github.com/r-tallinn/2020-01-coop-pank/tree/master/docs/plumber-docker
-
-
 
 
 
