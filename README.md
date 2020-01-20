@@ -10,7 +10,7 @@ page](https://www.meetup.com/r-tallinn/events/267579910/)
 
 [Intro slides](https://r-tallinn.github.io/2020-01-coop-pank/intro-slides/index.html)
 
-Mart Kaska: *How to catch bad guys with R?*
+[Mart Kaska: *How to catch bad guys with R?*](https://r-tallinn.github.io/2020-01-coop-pank/coop/aml)
 
 [Andreas Beger: *Writing R web APIs with plumber and Docker*](https://r-tallinn.github.io/2020-01-coop-pank/plumber-docker)
 
