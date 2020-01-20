@@ -46,15 +46,19 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Some examples {data-background=img/background_wide_white.jpg .centered}
 
-![](img/network.JPG){width=600 height=450px}
+![](img/network.jpg){width=600 height=450px}
 
 # AML proof of concept
 
 ## 3 months for testing ideas {data-background=img/background_wide.jpg .build}
 
-<div class="columns-2">
+<div style="float: left; width: 50%;">
 
 ![](img/thief.jpg){width=450 height=450px}
+
+</div>
+
+<div style="float: right; width: 50%;">
 
 - We can do it better than traditional algorithms
 
